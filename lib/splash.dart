@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forgottenland/app.dart';
 import 'package:forgottenland/bloc.dart';
+import 'package:forgottenland/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:splashscreen/splashscreen.dart';
 
@@ -30,7 +31,7 @@ class _SplashSoftScreenState extends State<SplashSoftScreen> {
   Widget build(BuildContext context) {
     MainBloc _mainBloc = Provider.of<MainBloc>(context);
 
-    _mainBloc.loadData();
+    _mainBloc.loadWorlds();
 
     return SplashScreen(
       routeName: '/',
@@ -38,7 +39,7 @@ class _SplashSoftScreenState extends State<SplashSoftScreen> {
       image: Image.asset('assets/logo.jpg'),
       photoSize: 130,
       backgroundColor: Colors.black,
-      loaderColor: Colors.white,
+      loaderColor: appTheme().highlightColor,
       navigateAfterSeconds: AppScreen(),
     );
   }

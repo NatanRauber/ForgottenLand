@@ -1,0 +1,4 @@
+enum MainState {
+  DEFAULT,
+  LOADING,
+}

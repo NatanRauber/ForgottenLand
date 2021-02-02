@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forgottenland/bloc.dart';
+import 'package:forgottenland/state.dart';
 import 'package:forgottenland/widgets/loading.dart';
+import 'package:forgottenland/widgets/stream-dropdown-menu.dart';
 import 'package:provider/provider.dart';
 
 class AppScreen extends StatefulWidget {
@@ -15,7 +17,7 @@ class _AppScreenState extends State<AppScreen> {
     MainBloc _mainBloc = Provider.of<MainBloc>(context);
 
     return Card(
-      color: Colors.grey[700],
+      margin: EdgeInsets.only(bottom: 5),
       child: Container(
         width: double.maxFinite,
         padding: EdgeInsets.all(15),
@@ -23,13 +25,23 @@ class _AppScreenState extends State<AppScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _mainBloc.getData()[index]['name'],
-              style: TextStyle(color: Colors.white, fontSize: 18),
+              _mainBloc.getHighscore() == null
+                  ? ''
+                  : (index + 1).toString() +
+                      '. ' +
+                      _mainBloc.getHighscore()[index]['name'],
+              style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 5),
             Text(
-              'level: ' + _mainBloc.getData()[index]['level'].toString(),
-              style: TextStyle(color: Colors.grey[50], fontSize: 18),
+              _mainBloc.getHighscore() == null
+                  ? ''
+                  : _mainBloc.getSkill() == 'Level'
+                      ? 'Level: ' +
+                          _mainBloc.getHighscore()[index]['level'].toString()
+                      : 'Skill: ' +
+                          _mainBloc.getHighscore()[index]['value'].toString(),
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),
@@ -44,29 +56,72 @@ class _AppScreenState extends State<AppScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.grey[850],
         title: Text('Forgotten Land'),
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        color: Colors.grey[900],
-        child: RefreshIndicator(
-          onRefresh: () async {
-            _mainBloc.loadData();
-          },
-          child: StreamBuilder<List<dynamic>>(
-            stream: _mainBloc.streamData,
-            builder: (context, snapshot) {
-              return snapshot.data == null
-                  ? loadingWidget()
-                  : ListView.builder(
-                      padding: EdgeInsets.all(10),
-                      itemCount: 100,
-                      itemBuilder: buildItem,
-                    );
-            },
-          ),
+        padding: EdgeInsets.all(15),
+        child: Column(
+          children: [
+            StreamBuilder<List<String>>(
+              stream: _mainBloc.streamWorlds,
+              builder: (context, snapshot) {
+                return streamDropdownMenu(
+                  'World',
+                  snapshot.data == null ? [] : snapshot.data,
+                  _mainBloc.streamSelectedWorld,
+                  _mainBloc.changeSelectedWorld,
+                );
+              },
+            ),
+            SizedBox(height: 15),
+            streamDropdownMenu(
+              'Skill',
+              [
+                'Level',
+                'Magic',
+                'Shielding',
+                'Fist',
+                'Distance',
+                'Sword',
+                'Axe',
+                'Club',
+                'Fishing'
+              ],
+              _mainBloc.streamSelectedSkill,
+              _mainBloc.changeSelectedSkill,
+            ),
+            SizedBox(height: 15),
+            RaisedButton(
+              child: Text('Search'),
+              onPressed: () {
+                _mainBloc.loadHighscores();
+              },
+            ),
+            SizedBox(height: 15),
+            Flexible(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  _mainBloc.loadHighscores();
+                },
+                child: StreamBuilder<MainState>(
+                  stream: _mainBloc.streamState,
+                  builder: (context, snapshot) {
+                    return snapshot.data == null
+                        ? Container()
+                        : snapshot.data == MainState.LOADING
+                            ? loadingWidget()
+                            : ListView.builder(
+                                padding: EdgeInsets.all(0),
+                                itemCount: 100,
+                                itemBuilder: buildItem,
+                              );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

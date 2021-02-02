@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forgottenland/bloc.dart';
 import 'package:forgottenland/splash.dart';
+import 'package:forgottenland/theme.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: appTheme(),
         home: SplashSoftScreen(),
       ),
     );
