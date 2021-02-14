@@ -30,14 +30,20 @@ class MainBloc extends ChangeNotifier {
     return _selectedSkill.value;
   }
 
+  String getName(int index) {
+    return _highscores.value[index]['name'];
+  }
+
   /// REQUESTS
   Future<bool> loadWorlds() async {
     Dio dio = Dio();
     Response response;
     List<dynamic> _aux;
+
     try {
       dio.options.headers['content-Type'] = 'application/json';
-      response = await dio.get(
+
+      Response response = await dio.get(
         'https://api.tibiadata.com/v2/worlds.json',
       );
 

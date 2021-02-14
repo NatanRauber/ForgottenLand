@@ -4,6 +4,7 @@ import 'package:forgottenland/state.dart';
 import 'package:forgottenland/widgets/loading.dart';
 import 'package:forgottenland/widgets/stream-dropdown-menu.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppScreen extends StatefulWidget {
   AppScreen({Key key}) : super(key: key);
@@ -16,34 +17,40 @@ class _AppScreenState extends State<AppScreen> {
   Widget buildItem(BuildContext context, int index) {
     MainBloc _mainBloc = Provider.of<MainBloc>(context);
 
-    return Card(
-      margin: EdgeInsets.only(bottom: 5),
-      child: Container(
-        width: double.maxFinite,
-        padding: EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _mainBloc.getHighscore() == null
-                  ? ''
-                  : (index + 1).toString() +
-                      '. ' +
-                      _mainBloc.getHighscore()[index]['name'],
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 5),
-            Text(
-              _mainBloc.getHighscore() == null
-                  ? ''
-                  : _mainBloc.getSkill() == 'Level'
-                      ? 'Level: ' +
-                          _mainBloc.getHighscore()[index]['level'].toString()
-                      : 'Skill: ' +
-                          _mainBloc.getHighscore()[index]['value'].toString(),
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        launch('https://www.tibia.com/community/?subtopic=characters&name=' +
+            _mainBloc.getName(index));
+      },
+      child: Card(
+        margin: EdgeInsets.only(bottom: 5),
+        child: Container(
+          width: double.maxFinite,
+          padding: EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _mainBloc.getHighscore() == null
+                    ? ''
+                    : (index + 1).toString() +
+                        '. ' +
+                        _mainBloc.getHighscore()[index]['name'],
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 5),
+              Text(
+                _mainBloc.getHighscore() == null
+                    ? ''
+                    : _mainBloc.getSkill() == 'Level'
+                        ? 'Level: ' +
+                            _mainBloc.getHighscore()[index]['level'].toString()
+                        : 'Skill: ' +
+                            _mainBloc.getHighscore()[index]['value'].toString(),
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+          ),
         ),
       ),
     );
