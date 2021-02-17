@@ -1,3 +1,3 @@
-# forgottenland
+# Forgotten Land
  
-Tibia Highscores app made using Flutter by Forgotten Land guild (Calmera Rookgaard)
+Tibia Rookgaard Highscores app made using Flutter by Forgotten Land guild (Calmera Rookgaard)
